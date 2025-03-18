@@ -54,6 +54,15 @@ resource "aws_s3_bucket_public_access_block" "tesla_app" {
     }
 }
 
+resource "aws_s3_object" "public_key" {
+    provider = aws.us-west-1
+    bucket = aws_s3_bucket.tesla_app.id
+    key = ".well-known/appspecific/com.tesla.3p.public-key.pem"
+    content = tls_private_key.tesla_app.public_key_pem
+    content_type = "text/plain"
+    cache_control = "max-age=86400"
+}
+
 data "aws_s3_bucket" "logs" {
     provider = aws.us-west-1
     bucket = "mleonhardt-app-logs"
