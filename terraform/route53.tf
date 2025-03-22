@@ -1,6 +1,6 @@
 data "aws_route53_zone" "mlcodes" {
     provider = aws.us-west-1
-    name = "mattleonhardt.codes"
+    name = var.root_domain
 }
 
 # We're not creating validation records as they already exist in Route53
@@ -8,7 +8,7 @@ data "aws_route53_zone" "mlcodes" {
 resource "aws_route53_record" "tesla_app" {
     provider = aws.us-west-1
     zone_id = data.aws_route53_zone.mlcodes.zone_id
-    name = "tesla.mattleonhardt.codes"
+    name = var.tesla_app_subdomain
     type = "A"
     alias {
         name = aws_cloudfront_distribution.tesla_app_distribution.domain_name
@@ -20,7 +20,7 @@ resource "aws_route53_record" "tesla_app" {
 resource "aws_route53_record" "tesla_callback" {
     provider = aws.us-west-1
     zone_id = data.aws_route53_zone.mlcodes.zone_id
-    name = "tesla-api.mattleonhardt.codes"
+    name = var.tesla_callback_subdomain
     type = "A"
     alias {
         name = aws_cloudfront_distribution.tesla_callback_distribution.domain_name
