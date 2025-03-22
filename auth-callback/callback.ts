@@ -4,6 +4,10 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     console.log("Event: ", event);
     let responseMessage = 'Hello, world!';
 
+    if (event.queryStringParameters && event.queryStringParameters.name) {
+        responseMessage = `Hello, ${event.queryStringParameters.name}!`;
+    }
+
     return {
         statusCode: 200,
         headers: {
