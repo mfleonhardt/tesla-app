@@ -20,5 +20,5 @@ resource "aws_lambda_permission" "tesla_callback_fn" {
     function_name = aws_lambda_function.tesla_callback_fn.function_name
     principal = "apigateway.amazonaws.com"
 
-    source_arn = "${aws_apigatewayv2_api.tesla_callback.execution_arn}/*/*"
+    source_arn = "${aws_apigatewayv2_api.tesla_callback.execution_arn}/$default/GET/auth/callback"
 }

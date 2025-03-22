@@ -41,6 +41,6 @@ resource "aws_apigatewayv2_route" "tesla_callback" {
     provider = aws.us-west-1
     api_id = aws_apigatewayv2_api.tesla_callback.id
 
-    route_key = "GET /tesla-app/auth/callback"
+    route_key = "GET /auth/callback"
     target = "integrations/${aws_apigatewayv2_integration.tesla_callback.id}"
 }
