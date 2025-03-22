@@ -13,4 +13,12 @@ resource "aws_lambda_function" "tesla_callback_fn" {
     role = aws_iam_role.lambda_exec.arn
 }
 
+resource "aws_lambda_permission" "tesla_callback_fn" {
+    provider = aws.us-west-1
+    statement_id = "AllowExecutionFromAPIGateway"
+    action = "lambda:InvokeFunction"
+    function_name = aws_lambda_function.tesla_callback_fn.function_name
+    principal = "apigateway.amazonaws.com"
 
+    source_arn = "${aws_apigatewayv2_api.tesla_callback.execution_arn}/*/*"
+}
