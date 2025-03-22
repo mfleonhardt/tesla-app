@@ -78,7 +78,7 @@ resource "aws_cloudfront_distribution" "tesla_app_distribution" {
     enabled = true
     is_ipv6_enabled = true
     default_root_object = "index.html"
-    aliases = ["mattleonhardt.codes"]
+    aliases = ["tesla.mattleonhardt.codes"]
     price_class = "PriceClass_100"
 
     restrictions {
