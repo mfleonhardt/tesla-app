@@ -31,7 +31,7 @@ resource "aws_cloudfront_distribution" "tesla_callback_distribution" {
 
   enabled         = true
   is_ipv6_enabled = true
-  aliases         = ["tesla-api.mattleonhardt.codes"]
+  aliases         = [var.tesla_callback_subdomain]
   price_class     = "PriceClass_100"
 
   restrictions {
