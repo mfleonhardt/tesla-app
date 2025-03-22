@@ -50,8 +50,8 @@ resource "aws_s3_bucket_public_access_block" "tesla_callback_fn" {
 
 data "archive_file" "tesla_callback_fn" {
     type = "zip"
-    source_dir = "${path.root}/../build/auth-callback"
-    output_path = "${path.root}/../build/auth-callback.zip"
+    source_dir = "${path.root}/../auth-callback/build"
+    output_path = "${path.root}/tmp/auth-callback.zip"
 }
 
 resource "aws_s3_object" "tesla_callback_fn" {
