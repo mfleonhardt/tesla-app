@@ -11,6 +11,14 @@ resource "aws_lambda_function" "tesla_callback_fn" {
     source_code_hash = data.archive_file.tesla_callback_fn.output_base64sha256
 
     role = aws_iam_role.lambda_exec.arn
+
+    environment {
+        variables = {
+            TESLA_CLIENT_ID = var.tesla_client_id
+            TESLA_CLIENT_SECRET = var.tesla_client_secret
+            TESLA_REDIRECT_URI = "https://${var.tesla_callback_subdomain}/auth/callback"
+        }
+    }
 }
 
 resource "aws_lambda_permission" "tesla_callback_fn" {
