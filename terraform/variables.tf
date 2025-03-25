@@ -15,3 +15,13 @@ variable "tesla_callback_subdomain" {
     description = "The domain name for the Tesla Callback"
     default = "api.example.com"
 }
+
+variable "tesla_client_id" {
+    type = string
+    description = "The client ID for the Tesla App"
+}
+
+variable "tesla_client_secret" {
+    type = string
+    description = "The client secret for the Tesla App"
+}
