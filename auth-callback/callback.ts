@@ -1,4 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { getCookieValue, setCookie, invalidateCookie } from './lib/cookies';
 
 const tokenUrl = "https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token";
 const audience = "https://fleet-api.prd.vn.cloud.tesla.com";
@@ -10,6 +11,22 @@ interface AccessTokenResponse {
     expires_in: number;
     state: string;
     token_type: string;
+}
+
+interface State {
+    nonce: string;
+    redirectUri: string;
+}
+
+const decodeState = (event: APIGatewayProxyEvent): State => {
+    const cookieState = getCookieValue(event, 'tesla_auth_state');
+    const queryState = event.queryStringParameters?.state;
+
+    if (!cookieState || !queryState || cookieState !== queryState) {
+        throw new Error(`Invalid state: Cookie: ${cookieState}, Query: ${queryState}`);
+    }
+
+    return JSON.parse(atob(cookieState));
 }
 
 const getCode = (event: APIGatewayProxyEvent): string => {
@@ -51,19 +68,33 @@ const getAccessToken = async <AccessTokenResponse>(code: string): Promise<Access
 }
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-
     console.log("Event: ", event);
 
-    const code = getCode(event);
-    const accessToken = await getAccessToken<AccessTokenResponse>(code);
+    try {
+        const { redirectUri } = decodeState(event);
+        const code = getCode(event);
+        const accessToken = await getAccessToken<AccessTokenResponse>(code);
 
-    return {
-        statusCode: 200,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            token: accessToken,
-        }),
+        const tokenCookie = setCookie('tesla_access_token', accessToken.access_token);
+        const authFlagCookie = setCookie('is_authenticated', "1", false);
+        const invalidateStateCookie = invalidateCookie(event, 'tesla_auth_state');
+
+        return {
+            statusCode: 301,
+            headers: {
+                'Content-Type': 'application/json',
+                'Location': redirectUri
+            },
+            multiValueHeaders: {
+                'Set-Cookie': [tokenCookie, authFlagCookie, invalidateStateCookie]
+            },
+            body: "Redirecting to " + redirectUri
+        };
+    } catch (e) {
+        console.error("Error: ", e);
+        return {
+            statusCode: 401,
+            body: "Unauthorized"
+        };
     }
 }

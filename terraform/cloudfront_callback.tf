@@ -4,7 +4,10 @@ resource "aws_cloudfront_cache_policy" "tesla_callback" {
   min_ttl  = 1
   parameters_in_cache_key_and_forwarded_to_origin {
     cookies_config {
-      cookie_behavior = "none"
+      cookie_behavior = "whitelist"
+      cookies {
+        items = ["tesla_auth_state"]
+      }
     }
     headers_config {
       header_behavior = "none"

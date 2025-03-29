@@ -17,6 +17,7 @@ resource "aws_lambda_function" "tesla_callback_fn" {
             TESLA_CLIENT_ID = var.tesla_client_id
             TESLA_CLIENT_SECRET = var.tesla_client_secret
             TESLA_REDIRECT_URI = "https://${var.tesla_callback_subdomain}/auth/callback"
+            COOKIE_DOMAIN = ".${var.root_domain}"
         }
     }
 }
