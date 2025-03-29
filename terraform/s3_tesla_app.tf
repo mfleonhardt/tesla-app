@@ -63,3 +63,28 @@ resource "aws_s3_object" "public_key" {
     cache_control = "max-age=86400"
 }
 
+resource "aws_s3_object" "tesla_app" {
+    provider = aws.us-west-1
+    bucket = aws_s3_bucket.tesla_app.id
+    for_each = fileset("${path.root}/../app/dist", "**/*")
+    key = each.value
+    source = "${path.root}/../app/dist/${each.value}"
+    etag = filemd5("${path.root}/../app/dist/${each.value}")
+    content_type = lookup(local.mime_types, regex("\\.[^.]+$", each.value), "application/octet-stream")
+}
+
+locals {
+  mime_types = {
+    ".html" = "text/html"
+    ".css"  = "text/css"
+    ".js"   = "application/javascript"
+    ".json" = "application/json"
+    ".png"  = "image/png"
+    ".jpg"  = "image/jpeg"
+    ".jpeg" = "image/jpeg"
+    ".svg"  = "image/svg+xml"
+    ".ico"  = "image/x-icon"
+    ".txt"  = "text/plain"
+    ".pdf"  = "application/pdf"
+  }
+}
