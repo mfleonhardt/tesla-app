@@ -8,11 +8,15 @@ import { userAuthorizationUrl } from './lib/TeslaAuth.ts'
 import './styles/index.css'
 
 const AppRoutes = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   // Redirect to Tesla auth if not authenticated
   if (!isAuthenticated) {
-    window.location.href = userAuthorizationUrl();
+    window.location.href = userAuthorizationUrl(window.location.href);
     return null;
   }
 
