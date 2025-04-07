@@ -1,7 +1,7 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { APIGatewayProxyEventV2 } from 'aws-lambda';
 import * as cookie from 'cookie';
 
-const getCookieValue = (event: APIGatewayProxyEvent, name: string): string | undefined => {
+const getCookieValue = (event: APIGatewayProxyEventV2, name: string): string | undefined => {
     const cookies = cookie.parse(event.headers.cookie || event.headers.Cookie || '');
     if (!cookies) return undefined;
 
@@ -19,7 +19,7 @@ const setCookie = (name: string, value: string, httpOnly: boolean = true, maxAge
     });
 }
 
-const invalidateCookie = (event: APIGatewayProxyEvent, name: string): string => {
+const invalidateCookie = (name: string): string => {
     return setCookie(name, '', false, -1);
 }
 
